@@ -112,7 +112,18 @@ namespace IdentityDemo.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser
+                {  UserName = model.UserName, //eallain: testing with username
+                   Email = model.Email,
+                    //eallain:  custom properties
+                   FirstName = model.FirstName,
+                   LastName = model.LastName,
+                   Address = model.Address,
+                   City = model.City,
+                   PostalCode = model.PostalCode,
+                   Province = model.Province
+                   //eallain:  end custom properties
+                };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {

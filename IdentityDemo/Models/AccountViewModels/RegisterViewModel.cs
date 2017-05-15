@@ -23,5 +23,39 @@ namespace IdentityDemo.Models.AccountViewModels
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        //Added these 
+        [Required]
+        [StringLength(50)]
+        public string FirstName { get; set; }
+
+        [Required]
+        [StringLength(65)]
+        public string LastName { get; set; }
+
+
+        [Required]
+        [StringLength(150)]
+        public string Address { get; set; }
+
+        [Required]
+        [StringLength(60)]
+        public string City { get; set; }
+
+        [Required]
+        [StringLength(7)]
+        [DataType(DataType.PostalCode)] //front end
+        public string PostalCode { get; set; }
+
+        [Required]
+        [StringLength(2)]
+        public string Province { get; set; }
+
+        //test with username
+        [Required]
+        [StringLength(256)]
+        public string UserName { get; set; }
+
+
     }
 }
