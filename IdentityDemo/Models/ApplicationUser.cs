@@ -13,9 +13,11 @@ namespace IdentityDemo.Models
         //eallain: Add custom user properties
         [Required]
         [StringLength(50)]
+        [Display(Name ="First Name")]
         public string FirstName { get; set; }
         [Required]
         [StringLength(65)]
+        [Display(Name ="Last Name")]
         public string LastName { get; set; }
         [Required]
         [StringLength(150)]
@@ -25,6 +27,7 @@ namespace IdentityDemo.Models
         public string City { get; set; }
         [Required]
         [StringLength(7)]
+        [Display(Name ="Postal Code")]
         [Column(TypeName = "nchar(7)")] //goes back to database
         [DataType(DataType.PostalCode)] //front end
         public string PostalCode { get; set; }

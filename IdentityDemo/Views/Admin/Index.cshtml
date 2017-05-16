@@ -1,0 +1,56 @@
+﻿@model IEnumerable<IdentityDemo.Models.ApplicationUser>
+
+@{ 
+    ViewData["Title"] = "Admin";
+}
+
+<h2>
+    Manage Users
+</h2>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">Users</div>
+        <div class="panel-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Username</th>
+                        <th>Lockout Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var item in Model)
+                    {
+                        <tr>
+                            <td>@item.FirstName @item.LastName</td>
+                            <td>@item.Email</td>
+                            <td>@item.UserName</td>
+                            <td>
+                            
+                                @if (item.LockoutEnd != null)
+                                {
+                                    //Account is locked: check time
+                                    @(item.LockoutEnd < DateTimeOffset.Now ? "":"locked")
+                                    //display either "" or "locked" 
+                                }
+                            
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info"> 
+                                    <i class="glyphicon glyphicon-pencil"></i> Edit
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger"> 
+                                    <i class="glyphicon glyphicon-trash"></i> Delete
+                                </a>
+                            </td>
+                        </tr>
+
+                    }
+                </tbody>
+
+            </table>
+        </div>
+    </div>

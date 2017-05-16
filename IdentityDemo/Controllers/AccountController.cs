@@ -64,9 +64,24 @@ namespace IdentityDemo.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
+                //eallain:  alternative to Startup - confirmed email
+                /*
+                var user = await _userManager.FindByNameAsync(model.UserName); //normally this is model.Email
+                if (user != null)
+                {
+                    if (!await _userManager.IsEmailConfirmedAsync(user))
+                    {
+                        ModelState.AddModelError(string.Empty, "You must have a confirmed email to log in!");
+                        ViewData["EmailNotConfirmed"] = true;
+                        return View(model);
+                    }
+                }
+                */
+                //eallain:  end alternative to Startup - confirmed email
+
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: true); //eallain: lockout on
                 if (result.Succeeded)
                 {
                     _logger.LogInformation(1, "User logged in.");
@@ -127,16 +142,27 @@ namespace IdentityDemo.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=532713
-                    // Send an email with this link
-                    //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    //var callbackUrl = Url.Action(nameof(ConfirmEmail), "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                    //await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
-                    //    $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>");
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    _logger.LogInformation(3, "User created a new account with password.");
-                    return RedirectToLocal(returnUrl);
-                }
+                    //eallain:  assign new users to default "user" role
+                    IdentityResult roleResult = await _userManager.AddToRoleAsync(user, "user");
+                    if(roleResult.Succeeded)
+                    {
+                                // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=532713
+                                // Send an email with this link
+                                //eallain: Enable Account Confirmation
+                                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                                var callbackUrl = Url.Action(nameof(ConfirmEmail), "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                                await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
+                                    $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>");
+
+                                //eallain:  disable auto sign-in
+                                //await _signInManager.SignInAsync(user, isPersistent: false);
+                                //_logger.LogInformation(3, "User created a new account with password.");
+                                return RedirectToLocal(returnUrl);
+                            }
+                    }
+
+
+               
                 AddErrors(result);
             }
 
@@ -289,11 +315,13 @@ namespace IdentityDemo.Controllers
 
                 // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=532713
                 // Send an email with this link
-                //var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-                //var callbackUrl = Url.Action(nameof(ResetPassword), "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
-                //await _emailSender.SendEmailAsync(model.Email, "Reset Password",
-                //   $"Please reset your password by clicking here: <a href='{callbackUrl}'>link</a>");
-                //return View("ForgotPasswordConfirmation");
+
+                //eallain:  Enable forgot password
+                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var callbackUrl = Url.Action(nameof(ResetPassword), "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                await _emailSender.SendEmailAsync(model.Email, "Reset Password",
+                   $"Please reset your password by clicking here: <a href='{callbackUrl}'>link</a>");
+                return View("ForgotPasswordConfirmation");
             }
 
             // If we got this far, something failed, redisplay form

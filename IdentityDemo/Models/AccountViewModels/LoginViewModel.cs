@@ -8,9 +8,9 @@ namespace IdentityDemo.Models.AccountViewModels
 {
     public class LoginViewModel
     {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
+        //[Required]
+        //[EmailAddress]
+        //public string Email { get; set; }
 
         [Required]
         [DataType(DataType.Password)]
@@ -18,5 +18,10 @@ namespace IdentityDemo.Models.AccountViewModels
 
         [Display(Name = "Remember me?")]
         public bool RememberMe { get; set; }
+
+        //test with username
+        [Required]
+        [StringLength(256)]
+        public string UserName { get; set; }
     }
 }

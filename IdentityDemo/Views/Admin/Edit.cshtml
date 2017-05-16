@@ -1,0 +1,100 @@
+﻿@model IdentityDemo.Models.ApplicationUser
+@inject IdentityDemo.Services.IRequestFormDataService FormDataHelper
+
+@{
+    ViewData["Title"] = "Edit User";
+}
+
+<h2>Edit User</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="Edit">
+                <div class="form-horizontal">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <div class="form-group">
+                        <label asp-for="FirstName" class="col-md-2 control-label"></label>
+                        <div class="col-md-10">
+                            <input asp-for="FirstName" class="form-control" />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="LastName" class="col-md-2 control-label"></label>
+                        <div class="col-md-10">
+                            <input asp-for="LastName" class="form-control" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Address" class="col-md-2 control-label"></label>
+                        <div class="col-md-10">
+                            <input asp-for="Address" class="form-control" />
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="City" class="col-md-2 control-label"></label>
+                        <div class="col-md-10">
+                            <input asp-for="City" class="form-control" />
+                            <span asp-validation-for="City" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="PostalCode" class="col-md-2 control-label"></label>
+                        <div class="col-md-10">
+                            <input asp-for="PostalCode" class="form-control" />
+                            <span asp-validation-for="PostalCode" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Province" class="col-md-2 control-label"></label>
+                        <div class="col-md-10">
+                            <select asp-for="Province" class="form-control" asp-items="@FormDataHelper.GetProvinces()"></select>
+                        </div>
+                    </div>  
+                    @*<div class="form-group">
+                        <label asp-for="Province" class="col-md-2 control-label"></label>
+                        <div class="col-md-10">
+                            <input asp-for="Province" class="form-control" />
+                            <span asp-validation-for="Province" class="text-danger"></span>
+                        </div>
+                    </div>*@
+                    <div class="form-group">
+                        <label asp-for="Email" class="col-md-2 control-label"></label>
+                        <div class="col-md-10">
+                            <input asp-for="Email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <button type="submit" class="btn btn-default">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6">
+            @{ 
+                @if (Model.LockoutEnd != null)
+                {
+                   
+                    @if (Model.LockoutEnd > DateTimeOffset.Now)
+                    {
+                        //User account is still locked - show button to unlock account
+                        <form asp-action="Unlock">
+                            <input type="hidden" asp-for="Id" />
+                            <div class="col-md-10">
+                                @Model.UserName &nbsp; 
+                                <button type="submit" class="btn btn-default">Unlock Account                                     
+                                    <i class="glyphicon glyphicon-lock"></i>
+                                </button>
+                            </div>
+                        </form>
+
+                    }
+                }            
+            }
+        </div>
+    </div>
